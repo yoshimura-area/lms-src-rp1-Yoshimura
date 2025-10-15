@@ -84,5 +84,79 @@
 		</div>
 	</div>
 
+<h3>勤怠一覧</h3>
+
+	<div class="row">
+		<div class="bs-component col-sm-12">
+
+			<form th:action="@{/attendance/update}" method="post">
+				<table class="table table-hover dataTable no-footer">
+					<thead>
+						<tr>
+							<th class="w140">日付</th>
+							<th class="w70">出勤</th>
+							<th class="w70">退勤</th>
+							<th class="w80">中抜け時間</th>
+							<th class="w70">ステータス</th>
+							<th class="w240">備考</th>
+						</tr>
+					</thead>
+					<tbody>
+						<th:block th:each="dailyAttendanceForm, stat : *{attendanceForm.attendanceList}">
+							<tr>
+								<td class="w140">
+									<!--<ul id="resultList"></ul>-->
+
+
+<form id="dateForm">
+  <span th:text="${dailyAttendanceForm.dispTrainingDate}"></span>
+</form>
+<!--<script th:inline="javascript">
+    const records = {
+	    date: /*[[${dailyAttendanceForm.dispTrainingDate}?: '""']]*/,
+      startTime: /*[[${dailyAttendanceForm.startTime}?: '""']]*/
+    };
+    const validRecords = records.filter(record => record.trainingStartTime !== null && record.trainingStartTime !== "");
+
+    const listElement = document.getElementById("resultList");
+    validRecords.forEach(record => {
+      const li = document.createElement("li");
+      li.textContent = `${record.date} - 出勤時間: ${record.startTime}`;
+      listElement.appendChild(li);
+    });
+    </script>-->
+							</td>
+								<td class="w70">
+									<input type="text" th:name="|attendanceList[${stat.index}].trainingStartTime|"
+									th:value="${dailyAttendanceForm.trainingStartTime}" class="form-control" />
+									<!--<p id="attend"></p>-->
+							    <!--<script>
+                                document.getElementById("dailyAttendanceForm").addEventListener("submit", function(event) {event.preventDefault();
+                                const value = document.getElementById("dailyAttendanceForm").value; 
+                                  document.getElementById("attend").textContext= "dailyAttendanceForm"; });
+                                 </script>-->
+								</td>
+								<td class="w70">
+									<input type="text" th:name="|attendanceList[${stat.index}].trainingEndTime|"
+									th:value="${dailyAttendanceForm.trainingEndTime}" class="form-control" />
+								</td>
+								<td class="w80">
+									<select th:name="|attendanceList[${stat.index}].blankTime|" class="form-control">
+										<option th:each="blankTime : ${attendanceForm.blankTimes}" th:value="${blankTime.key}" th:inlne="text" class="form-control" 
+											th:selected="${blankTime.key == dailyAttendanceForm.blankTime}">[[${blankTime.value}]]</option>
+									</select>
+								</td>
+								<td class="w70">[[${dailyAttendanceForm.statusDispName}]]</td>
+								<td class="w240">
+									<input type="text" th:name="|attendanceList[${stat.index}].note|" th:value="${dailyAttendanceForm.note}" class="form-control"></input>
+								</td>
+							</tr>
+						</th:block>
+					</tbody>
+				</table>
+            </form>
+		</div>
+	</div>
+
 </body>
 </html>
