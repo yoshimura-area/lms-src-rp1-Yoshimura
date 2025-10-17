@@ -1,0 +1,33 @@
+@charset "UTF-8";
+
+.table-scroll-wrapper {
+  display: block !important;
+  max-height: 60rem !important; 
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  border: 1px solid #ccc !important;
+}
+
+.table-scroll-wrapper table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.table-scroll-wrapper thead {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 2;
+}
+
+.table-scroll-wrapper tbody {
+  display: block;
+}
+
+.table-scroll-wrapper thead,
+.table-scroll-wrapper tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
