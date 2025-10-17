@@ -2,18 +2,14 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{/common/layout :: layout(~{::title},~{::body/content()})}">
 <head>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
   <meta charset="UTF-8">
   <title>勤怠情報変更｜LMS</title>
-  <style>
+ <style>
     .table-scroll-wrapper {
-      max-height: 400px;
+      max-height: calc(10 * 3rem);
       overflow-y: auto;
-    }
-    .table-scroll-wrapper thead th {
-      position: sticky;
-      top: 0;
-      background-color: white;
-      z-index: 10;
+      border: 1px solid #ccc;
     }
   </style>
 </head>
@@ -46,10 +42,15 @@
             </thead>
            <tbody>
   <tr th:each="attendance, stat : *{attendanceList}">
-    <td>
-      <textarea th:field="*{attendanceList[__${stat.index}__].remarks}" class="form-control"></textarea>
-    </td>
-            
+   <th:block>
+    <input type="hidden" th:field="*{attendanceList[__${stat.index}__].isToday}" />
+    <input type="hidden" th:field="*{attendanceList[__${stat.index}__].studentAttendanceId}" />
+    <input type="hidden" th:field="*{attendanceList[__${stat.index}__].trainingDate}" />
+    <input type="hidden" th:field="*{attendanceList[__${stat.index}__].dispTrainingDate}" />
+    <input type="hidden" th:field="*{attendanceList[__${stat.index}__].sectionName}" />
+    <input type="hidden" th:field="*{attendanceList[__${stat.index}__].statusDispName}" />
+　</th:block>
+
     <td class="w140">[[${attendance.dispTrainingDate}]]</td>
     <td class="w300">[[${attendance.sectionName}]]</td>
     <td class="w70">
@@ -71,6 +72,9 @@
     <td class="w240">
       <input type="text" th:field="*{attendanceList[__${stat.index}__].note}" class="form-control" />
     </td>
+    <!--<td>
+      <textarea th:field="*{attendanceList[__${stat.index}__].remarks}" class="form-control"></textarea>
+    </td>-->
   </tr>
 </tbody> 
           </table>
