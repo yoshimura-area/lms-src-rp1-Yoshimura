@@ -2,20 +2,23 @@
 <html xmlns:th="http://www.thymeleaf.org" 
 	th:replace="~{/common/layout :: layout(~{::title},~{::body/content()})}">
 <head>
-<meta charset="UTF-8">
+	<meta charset="UTF-8">
+	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+  <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+  <script th:src="@{/js/jquery.min.js}"></script>
 <title>勤怠情報変更｜LMS</title>
 </head>
 <body>
 
 	<!-- 完了メッセージ -->
-	<th:block th:if="${not #strings.isEmpty(message)}" id="message">
-		<div class="alert alert-info alert-dismissible fade in" role="alert">
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-				<span aria-hidden="true">×</span>
-			</button>
-			<span>[[${message}]]</span>
-		</div>
-	</th:block>
+	<th:block th:if="${not #strings.isEmpty(message) and message != '過去日の勤怠に未入力があります。'}" id="message">
+	<div class="alert alert-info alert-dismissible fade in" role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			<span aria-hidden="true">×</span>
+		</button>
+		<span>[[${message}]]</span>
+	</div>
+</th:block>
 
 	<h2>勤怠管理</h2>
 
@@ -25,7 +28,7 @@
 			<li><span th:text="'*' + '&nbsp' + ${error}" class="help-inline error"></span></li>
 		</ul>
 	</th:block>
-
+	
 	<th:block th:if="${session.loginUserDto.role == '0001'}">
 		<div class="well well-lg p10 mb10">
 			<div class="form-group">
@@ -87,6 +90,47 @@
 			return hours + ':' + minutes;
 		}
 	</script>
+
+<!-- メッセージ用モーダル -->
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document" style="margin-top: 5%;">
+    <div class="modal-content" style="border-radius: 8px; border: 1px solid #ccc;">
+      
+      <div class="modal-body text-center" id="messageModalBody"
+           style="font-size: 16px; font-weight: normal; color: #444; padding: 25px 15px;">
+        
+      </div>
+
+      <div class="modal-footer" style="text-align: center; border-top: none; padding-bottom: 20px;">
+        <button type="button" class="btn btn-default" data-dismiss="modal" style="min-width: 100px;">
+          OK
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+<!-- モーダル表示用スクリプト -->
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  $(function() {
+      var message = /*[[${message}]]*/ null;
+
+      var hideMessages = [
+          "勤怠情報の登録が完了しました。"
+      ];
+
+      if (message && hideMessages.indexOf(message) === -1) {
+          $('#messageModalBody').text(message);
+          $('#messageModal').modal('show');
+      }
+  });
+  /*]]>*/
+</script>
+
 
 </body>
 </html>
