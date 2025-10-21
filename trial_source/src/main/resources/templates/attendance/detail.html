@@ -96,11 +96,19 @@
   <div class="modal-dialog" role="document" style="margin-top: 5%;">
     <div class="modal-content" style="border-radius: 8px; border: 1px solid #ccc;">
       
+      <!-- タイトル部分 -->
+      <div class="modal-header" style="border-bottom: 1px solid #ddd; text-align: center;">
+        <h4 class="modal-title" id="messageModalLabel" 
+            style="font-size: 18px; font-weight: bold; color: #333; margin: 0;">
+          通知
+        </h4>
+      </div>
+　　　<!-- メッセージ表示 -->
       <div class="modal-body text-center" id="messageModalBody"
            style="font-size: 16px; font-weight: normal; color: #444; padding: 25px 15px;">
-        
       </div>
-
+      
+　　　<!-- OKボタン -->
       <div class="modal-footer" style="text-align: center; border-top: none; padding-bottom: 20px;">
         <button type="button" class="btn btn-default" data-dismiss="modal" style="min-width: 100px;">
           OK
@@ -110,8 +118,6 @@
     </div>
   </div>
 </div>
-
-
 
 <!-- モーダル表示用スクリプト -->
 <script th:inline="javascript">
@@ -130,7 +136,6 @@
   });
   /*]]>*/
 </script>
-
 
 </body>
 </html>
