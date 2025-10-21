@@ -1,5 +1,8 @@
 package jp.co.sss.lms.form;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.Data;
 
 /**
@@ -46,5 +49,33 @@ public class DailyAttendanceForm {
 	private String courseName;
 	/** インデックス */
 	private String index;
+	
+	private String remarks;
 
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+	
+	private List<Attendance> attendanceList;  // フィールド
+
+    
+    public DailyAttendanceForm() {
+        // optional: 初期化しておく
+        this.attendanceList = new ArrayList<>();
+    }
+
+    // getter
+    public List<Attendance> getAttendanceList() {
+        return attendanceList;
+    }
+
+    //setter
+    public void setAttendanceList(List<Attendance> attendanceList) {
+        this.attendanceList = attendanceList;
+    }
 }
+

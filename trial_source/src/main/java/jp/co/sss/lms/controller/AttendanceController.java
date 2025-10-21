@@ -2,6 +2,7 @@ package jp.co.sss.lms.controller;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -45,13 +46,29 @@ public class AttendanceController {
 	@RequestMapping(path = "/detail", method = RequestMethod.GET)
 	public String index(Model model) {
 
-		// 勤怠一覧の取得
-		List<AttendanceManagementDto> attendanceManagementDtoList = studentAttendanceService
-				.getAttendanceManagement(loginUserDto.getCourseId(), loginUserDto.getLmsUserId());
-		model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
+	    // 勤怠一覧の取得
+	    List<AttendanceManagementDto> attendanceManagementDtoList = studentAttendanceService
+	            .getAttendanceManagement(loginUserDto.getCourseId(), loginUserDto.getLmsUserId());
+	    model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
 
-		return "attendance/detail";
+	    // 未入力チェック
+	    boolean hasMissingAttendance = attendanceManagementDtoList.stream()
+	        // 今日以前の日付のみチェック
+	        .filter(dto -> dto.getTrainingDate() != null && dto.getTrainingDate().before(new Date()))
+	        // 出勤時間または退勤時間が null または空文字 の場合
+	        .anyMatch(dto ->
+	            dto.getTrainingStartTime() == null || dto.getTrainingStartTime().isBlank() ||
+	            dto.getTrainingEndTime() == null   || dto.getTrainingEndTime().isBlank()
+	        );
+
+	    if (hasMissingAttendance) {
+	        model.addAttribute("message", "過去日の勤怠に未入力があります。");
+	    }
+
+	    return "attendance/detail";
 	}
+
+
 
 	/**
 	 * 勤怠管理画面 『出勤』ボタン押下

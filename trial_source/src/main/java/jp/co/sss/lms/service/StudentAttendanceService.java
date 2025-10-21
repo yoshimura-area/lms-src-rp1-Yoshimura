@@ -123,6 +123,7 @@ public class StudentAttendanceService {
 		return null;
 	}
 
+	
 	/**
 	 * 出勤ボタン処理
 	 * 

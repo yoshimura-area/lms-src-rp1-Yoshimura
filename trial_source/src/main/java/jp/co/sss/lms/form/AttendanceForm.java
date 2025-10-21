@@ -1,5 +1,6 @@
 package jp.co.sss.lms.form;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -30,6 +31,6 @@ public class AttendanceForm {
 	/** 中抜け時間(プルダウン) */
 	private LinkedHashMap<Integer, String> blankTimes;
 	/** 日次の勤怠フォームリスト */
-	private List<DailyAttendanceForm> attendanceList;
+	private List<DailyAttendanceForm> attendanceList = new ArrayList<>();
 
 }
