@@ -3,7 +3,9 @@ package jp.co.sss.lms.service;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -333,6 +335,26 @@ public class StudentAttendanceService {
 		}
 		// 完了メッセージ
 		return messageUtil.getMessage(Constants.PROP_KEY_ATTENDANCE_UPDATE_NOTICE);
+	}
+
+	/**
+	 * 勤怠情報（受講生入力）未入力件数取得
+	 * 
+	 * @param lmsUserId  ログインユーザーのLMSユーザーID
+	 * @param currentDate 現在日付
+	 * @return 未入力件数
+	 */
+
+	public int getUnfilledCount(Integer lmsUserId, Date currentDate) {
+
+	    // Mapインターフェースを初期化
+		Map<String, Object> params = new HashMap<>();
+	    params.put("lmsUserId", lmsUserId);
+	    params.put("deleteFlg", Constants.DB_FLG_FALSE); // 削除フラグは固定値（0）
+	    params.put("currentDate", currentDate);
+
+	    // Mapper呼び出し
+	    return tStudentAttendanceMapper.getUnfilledCount(params);
 	}
 
 }

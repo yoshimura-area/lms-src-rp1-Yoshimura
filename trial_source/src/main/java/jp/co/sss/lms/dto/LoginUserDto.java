@@ -63,5 +63,9 @@ public class LoginUserDto implements Serializable {
 	private Date leaveDate;
 	/** ファイル共有フラグ */
 	private Short fileShareFlg;
+	/** コースIDを取得 */
+	public Integer getCourseId() { return courseId; }
+	/** LMSユーザIDを取得*/
+    public Integer getLmsUserId() { return lmsUserId; }
 
 }

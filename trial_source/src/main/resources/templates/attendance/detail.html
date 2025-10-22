@@ -91,50 +91,29 @@
 		}
 	</script>
 
-<!-- メッセージ用モーダル -->
-<div class="modal fade" id="messageModal" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document" style="margin-top: 5%;">
-    <div class="modal-content" style="border-radius: 8px; border: 1px solid #ccc;">
-      
-      <!-- タイトル部分 -->
-      <div class="modal-header" style="border-bottom: 1px solid #ddd; text-align: center;">
-        <h4 class="modal-title" id="messageModalLabel" 
-            style="font-size: 18px; font-weight: bold; color: #333; margin: 0;">
-          通知
-        </h4>
-      </div>
-　　　<!-- メッセージ表示 -->
-      <div class="modal-body text-center" id="messageModalBody"
-           style="font-size: 16px; font-weight: normal; color: #444; padding: 25px 15px;">
-      </div>
-      
-　　　<!-- OKボタン -->
-      <div class="modal-footer" style="text-align: center; border-top: none; padding-bottom: 20px;">
-        <button type="button" class="btn btn-default" data-dismiss="modal" style="min-width: 100px;">
-          OK
-        </button>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- モーダル表示用スクリプト -->
+<!-- ダイアログ表示スクリプト -->
 <script th:inline="javascript">
-  /*<![CDATA[*/
-  $(function() {
-      var message = /*[[${message}]]*/ null;
+/*<![CDATA[*/
+$(function() {
+    // 通常メッセージ
+    var message = /*[[${message}]]*/ null;
+    
+    // 更新完了メッセージ（リダイレクト後）
+    var updateMessage = /*[[${updateMessage}]]*/ null;
 
-      var hideMessages = [
-          "勤怠情報の登録が完了しました。"
-      ];
+    // 表示対象メッセージを決定
+    var finalMessage = updateMessage || message;
 
-      if (message && hideMessages.indexOf(message) === -1) {
-          $('#messageModalBody').text(message);
-          $('#messageModal').modal('show');
-      }
-  });
-  /*]]>*/
+    // 「登録完了メッセージ」を除く
+    var hideMessages = [
+        "勤怠情報の登録が完了しました。"
+    ];
+
+    if (finalMessage && hideMessages.indexOf(finalMessage) === -1) {
+        alert(finalMessage);
+    }
+});
+/*]]>*/
 </script>
 
 </body>

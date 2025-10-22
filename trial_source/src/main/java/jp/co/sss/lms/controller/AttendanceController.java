@@ -1,22 +1,22 @@
 package jp.co.sss.lms.controller;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jp.co.sss.lms.dto.AttendanceManagementDto;
 import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.form.AttendanceForm;
-import jp.co.sss.lms.form.DailyAttendanceForm;
 import jp.co.sss.lms.service.StudentAttendanceService;
 import jp.co.sss.lms.util.Constants;
 
@@ -33,6 +33,7 @@ public class AttendanceController {
 	private StudentAttendanceService studentAttendanceService;
 	@Autowired
 	private LoginUserDto loginUserDto;
+	
 
 	/**
 	 * 勤怠管理画面 初期表示
@@ -44,24 +45,29 @@ public class AttendanceController {
 	 * @throws ParseException
 	 */
 	@RequestMapping(path = "/detail", method = RequestMethod.GET)
-	public String index(Model model) {
+	public String index(Model model, HttpServletRequest request) {
+
+	    // Flashスコープ（前画面からのメッセージ）を取得
+	    Map<String, ?> flashMap = RequestContextUtils.getInputFlashMap(request);
+	    if (flashMap != null) {
+	        Object updateMessage = flashMap.get("message");
+	        if (updateMessage != null) {
+	            model.addAttribute("message", updateMessage.toString());
+	        }
+	    }
+
+	    //  ログイン情報の取得
+	    Integer courseId = loginUserDto.getCourseId();
+	    Integer lmsUserId = loginUserDto.getLmsUserId();
 
 	    // 勤怠一覧の取得
-	    List<AttendanceManagementDto> attendanceManagementDtoList = studentAttendanceService
-	            .getAttendanceManagement(loginUserDto.getCourseId(), loginUserDto.getLmsUserId());
+	    List<AttendanceManagementDto> attendanceManagementDtoList =
+	            studentAttendanceService.getAttendanceManagement(courseId, lmsUserId);
 	    model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
 
-	    // 未入力チェック
-	    boolean hasMissingAttendance = attendanceManagementDtoList.stream()
-	        // 今日以前の日付のみチェック
-	        .filter(dto -> dto.getTrainingDate() != null && dto.getTrainingDate().before(new Date()))
-	        // 出勤時間または退勤時間が null または空文字 の場合
-	        .anyMatch(dto ->
-	            dto.getTrainingStartTime() == null || dto.getTrainingStartTime().isBlank() ||
-	            dto.getTrainingEndTime() == null   || dto.getTrainingEndTime().isBlank()
-	        );
-
-	    if (hasMissingAttendance) {
+	    //  未入力チェック（更新完了メッセージがない時）
+	    boolean hasMissingAttendance = checkUnfilledAttendance(lmsUserId);
+	    if (hasMissingAttendance && (model.getAttribute("message") == null)) {
 	        model.addAttribute("message", "過去日の勤怠に未入力があります。");
 	    }
 
@@ -166,6 +172,21 @@ public class AttendanceController {
 	}*/
 	
 	@RequestMapping(path = "/update", params = "complete", method = RequestMethod.POST)
+	public String complete(AttendanceForm attendanceForm, RedirectAttributes redirectAttributes)
+	        throws ParseException {
+
+		 // 更新
+	    String updateMessage = studentAttendanceService.update(attendanceForm);
+
+	    // 登録完了メッセージをFlashに設定
+	    redirectAttributes.addFlashAttribute("updateMessage", updateMessage);
+
+	    // 勤怠管理画面へリダイレクト
+	    return "redirect:/attendance/detail";
+	}
+
+	
+/*@RequestMapping(path = "/update", params = "complete", method = RequestMethod.POST)
 	public String complete(AttendanceForm attendanceForm, Model model, BindingResult result)
 	        throws ParseException {
 
@@ -210,6 +231,20 @@ public class AttendanceController {
 	    model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
 
 	    return "attendance/detail";
+	}*/
+	
+	/**
+	 * 過去日の勤怠に未入力があるか確認する
+	 */
+	private boolean checkUnfilledAttendance(Integer lmsUserId) {
+	    try {
+	        Date currentDate = new Date();
+	        int missingCount = studentAttendanceService.getUnfilledCount(lmsUserId, currentDate);
+	        return missingCount > 0;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return false;
+	    }
 	}
 
 }

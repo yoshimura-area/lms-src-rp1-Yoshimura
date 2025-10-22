@@ -85,5 +85,17 @@
 			blank_time = #{blankTime}
 		WHERE student_attendance_id = #{studentAttendanceId}
 	</update>
+	
+	<select id="getUnfilledCount" parameterType="map" resultType="int">
+  SELECT COUNT(*)
+  FROM t_student_attendance
+  WHERE lms_user_id = #{lmsUserId}
+    AND COALESCE(delete_flg, 0) = #{deleteFlg}
+    AND CAST(training_date AS DATE) &lt;= CAST(#{currentDate} AS DATE)
+    AND (
+      training_start_time IS NULL OR training_start_time = ''
+      OR training_end_time IS NULL OR training_end_time = ''
+    )
+</select>
 
 </mapper>
