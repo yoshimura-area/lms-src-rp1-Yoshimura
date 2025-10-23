@@ -337,12 +337,14 @@ public class StudentAttendanceService {
 		return messageUtil.getMessage(Constants.PROP_KEY_ATTENDANCE_UPDATE_NOTICE);
 	}
 
+	
+	//Task.25修正開始　吉村
 	/**
 	 * 勤怠情報（受講生入力）未入力件数取得
 	 * 
 	 * @param lmsUserId  ログインユーザーのLMSユーザーID
 	 * @param currentDate 現在日付
-	 * @return 未入力件数
+	 * @return 未入力件数 
 	 */
 
 	public int getUnfilledCount(Integer lmsUserId, Date currentDate) {
@@ -350,11 +352,12 @@ public class StudentAttendanceService {
 	    // Mapインターフェースを初期化
 		Map<String, Object> params = new HashMap<>();
 	    params.put("lmsUserId", lmsUserId);
-	    params.put("deleteFlg", Constants.DB_FLG_FALSE); // 削除フラグは固定値（0）
+	    params.put("deleteFlg", Constants.DB_FLG_FALSE); 
 	    params.put("currentDate", currentDate);
+	    params.put("attendanceStatusExclude", 1);
 
 	    // Mapper呼び出し
 	    return tStudentAttendanceMapper.getUnfilledCount(params);
 	}
-
+    //Task.25修正修了　吉村
 }

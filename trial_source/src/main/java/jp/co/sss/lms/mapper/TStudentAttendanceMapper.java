@@ -39,6 +39,8 @@ public interface TStudentAttendanceMapper {
 	TStudentAttendance findByLmsUserIdAndTrainingDate(@Param("lmsUserId") Integer lmsUserId,
 			@Param("trainingDate") Date trainingDate, @Param("deleteFlg") Short deleteFlg);
 
+	
+	//Task.25修正開始　吉村
 	/**
 	 * 勤怠管理画面用DTOリスト取得
 	 * 
@@ -69,5 +71,5 @@ public interface TStudentAttendanceMapper {
 	int getUnfilledCount(@Param("lmsUserId") Integer lmsUserId,
             @Param("deleteFlg") Integer deleteFlg,
             @Param("currentDate") Date currentDate);
-
+	//Task.25修正修了　吉村
 }
