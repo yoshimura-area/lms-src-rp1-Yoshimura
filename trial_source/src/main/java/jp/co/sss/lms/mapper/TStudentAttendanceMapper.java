@@ -51,7 +51,10 @@ public interface TStudentAttendanceMapper {
 	 */
 	List<AttendanceManagementDto> getAttendanceManagement(@Param("courseId") Integer courseId,
 			@Param("lmsUserId") Integer lmsUserId, @Param("deleteFlg") Short deleteFlg);
-	 int getUnfilledCount(Map<String, Object> params);
+	 int getUnfilledCount(Map<String, Object> params);//引数をAttendanceManagementDto
+	 
+	 //Task.25修正修了　吉村
+	 
 	/**
 	 * 勤怠情報（受講生入力）登録
 	 * 
@@ -68,8 +71,5 @@ public interface TStudentAttendanceMapper {
 	 */
 	Boolean update(TStudentAttendance tStudentAttendance);
 	
-	int getUnfilledCount(@Param("lmsUserId") Integer lmsUserId,
-            @Param("deleteFlg") Integer deleteFlg,
-            @Param("currentDate") Date currentDate);
-	//Task.25修正修了　吉村
+	
 }

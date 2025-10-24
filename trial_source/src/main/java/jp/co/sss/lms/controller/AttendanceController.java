@@ -1,7 +1,6 @@
 package jp.co.sss.lms.controller;
 
 import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import jp.co.sss.lms.dto.AttendanceManagementDto;
 import jp.co.sss.lms.dto.LoginUserDto;
@@ -42,15 +42,21 @@ public class AttendanceController {
 	 * @return 勤怠管理画面
 	 * @throws ParseException
 	 */
+	
 	@RequestMapping(path = "/detail", method = RequestMethod.GET)
-	public String index(Model model) {
+	public String index(Model model,
+            @SessionAttribute("loginUser") LoginUserDto loginUserDto) {
+Integer courseId = loginUserDto.getCourseId();
+Integer lmsUserId = loginUserDto.getLmsUserId();
 
-	    Integer courseId = loginUserDto.getCourseId();
-	    Integer lmsUserId = loginUserDto.getLmsUserId();
+studentAttendanceService.loadAttendanceDetail(model, courseId, lmsUserId);
+
+return "attendance/detail";
+
 
 	    // 勤怠一覧の取得
-	    List<AttendanceManagementDto> attendanceManagementDtoList =
-	            studentAttendanceService.getAttendanceManagement(courseId, lmsUserId);
+	    /*List<AttendanceManagementDto> attendanceManagementDtoList =
+	            studentAttendanceService.getAttendanceManagement(courseId, lmsUserId);//ゲッターで書くことも可能
 	    model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
 
 	    // 現在日付の取得
@@ -58,13 +64,12 @@ public class AttendanceController {
 
 	    // 未入力件数の取得
 	    int unfilledCount = studentAttendanceService.getUnfilledCount(lmsUserId, currentDate);
-	    System.out.println("【デバッグ】未入力件数 = " + unfilledCount); // デバッグ用
 
 	    if (unfilledCount > 0 && model.getAttribute("message") == null) {
-	        model.addAttribute("message", "過去日の勤怠に未入力があります。");
-	    }
-
-	    return "attendance/detail";
+	        model.addAttribute("message", "過去日の勤怠に未入力があります。");//Booleanのほうが良いかも？
+	                                                                          //コントローラーは画面遷移するだけ
+	    }*/        
+	    
 	}
 //Task.25修正修了　吉村
 

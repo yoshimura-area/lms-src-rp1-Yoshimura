@@ -99,7 +99,7 @@ public class AttendanceUtil {
 			// DateUtil#toStringとparseは同様のフォーマットを使用しているため、起こりえないエラー
 			throw new IllegalStateException();
 		}
-		return trainingDate;
+		return trainingDate;//ここを現在日として使用
 	}
 
 	/**

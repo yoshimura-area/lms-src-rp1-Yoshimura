@@ -13,7 +13,7 @@
 	<!-- 完了メッセージ -->
 	<th:block th:if="${not #strings.isEmpty(message) and message != '過去日の勤怠に未入力があります。'}" id="message">
 	<div class="alert alert-info alert-dismissible fade in" role="alert">
-		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><!--このmessageを使いまわしてるから、ダイアログにも完了メッセージにもメッセージが出てきてしまう。-->
 			<span aria-hidden="true">×</span>
 		</button>
 		<span>[[${message}]]</span>
@@ -100,7 +100,7 @@ $(function() {
     // 通常メッセージ
     var message = /*[[${message}]]*/ null;
     
-    // 更新完了メッセージ（リダイレクト後）
+    // 更新完了メッセージ
     var updateMessage = /*[[${updateMessage}]]*/ null;
 
     // 表示対象メッセージを決定
