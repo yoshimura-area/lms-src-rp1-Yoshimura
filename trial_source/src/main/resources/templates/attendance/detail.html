@@ -91,33 +91,19 @@
 		}
 	</script>
 
-<!--Task.25修正開始　吉村-->
+<!-- 吉村健 Task.25-->
 
-<!-- ダイアログ表示スクリプト -->
 <script th:inline="javascript">
 /*<![CDATA[*/
 $(function() {
-    // 通常メッセージ
-    var message = /*[[${message}]]*/ null;
-    
-    // 更新完了メッセージ
-    var updateMessage = /*[[${updateMessage}]]*/ null;
-
-    // 表示対象メッセージを決定
-    var finalMessage = updateMessage || message;
-
-    // 「登録完了メッセージ」を除く
-    var hideMessages = [
-        "勤怠情報の登録が完了しました。"
-    ];
-
-    if (finalMessage && hideMessages.indexOf(finalMessage) === -1) {
-        alert(finalMessage);
+    var attendanceAlert = /*[[${attendanceAlert}]]*/ null;
+    console.log("attendanceAlert:", attendanceAlert);
+    if (attendanceAlert) {
+        alert(attendanceAlert);
     }
 });
 /*]]>*/
 </script>
-<!-- Task.25修正修了　吉村-->
 
 </body>
 </html>

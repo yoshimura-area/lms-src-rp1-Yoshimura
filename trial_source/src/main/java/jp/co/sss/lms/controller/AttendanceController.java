@@ -7,10 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.SessionAttribute;
 
+import jakarta.servlet.http.HttpSession;
 import jp.co.sss.lms.dto.AttendanceManagementDto;
 import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.form.AttendanceForm;
@@ -32,7 +33,6 @@ public class AttendanceController {
 	private LoginUserDto loginUserDto;
 	
 
-	//Task.25修正開始　吉村
 	/**
 	 * 勤怠管理画面 初期表示
 	 * 
@@ -43,35 +43,26 @@ public class AttendanceController {
 	 * @throws ParseException
 	 */
 	
-	@RequestMapping(path = "/detail", method = RequestMethod.GET)
-	public String index(Model model,
-            @SessionAttribute("loginUser") LoginUserDto loginUserDto) {
-Integer courseId = loginUserDto.getCourseId();
-Integer lmsUserId = loginUserDto.getLmsUserId();
+	/**
+	 * 勤怠詳細画面の表示
+	 */
+	@GetMapping("/detail")
+	public String index(Model model, HttpSession session) {
 
-studentAttendanceService.loadAttendanceDetail(model, courseId, lmsUserId);
+	    Integer courseId = loginUserDto.getCourseId();
+	    Integer lmsUserId = loginUserDto.getLmsUserId();
 
-return "attendance/detail";
+	    // 勤怠一覧を取得して Model に追加
+	    List<AttendanceManagementDto> attendanceList =
+	            studentAttendanceService.getAttendanceManagement(courseId, lmsUserId);
+	    model.addAttribute("attendanceManagementDtoList", attendanceList);
 
-
-	    // 勤怠一覧の取得
-	    /*List<AttendanceManagementDto> attendanceManagementDtoList =
-	            studentAttendanceService.getAttendanceManagement(courseId, lmsUserId);//ゲッターで書くことも可能
-	    model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
-
-	    // 現在日付の取得
-	    Date currentDate = new Date();
-
-	    // 未入力件数の取得
-	    int unfilledCount = studentAttendanceService.getUnfilledCount(lmsUserId, currentDate);
-
-	    if (unfilledCount > 0 && model.getAttribute("message") == null) {
-	        model.addAttribute("message", "過去日の勤怠に未入力があります。");//Booleanのほうが良いかも？
-	                                                                          //コントローラーは画面遷移するだけ
-	    }*/        
+	    // 未入力時アラートを Service で生成し Model に追加
+	    studentAttendanceService.addUnfilledAttendanceAlert(model, lmsUserId);//吉村健 - Task.25
 	    
+	    return "attendance/detail";
 	}
-//Task.25修正修了　吉村
+
 
 
 

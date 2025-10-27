@@ -1,5 +1,6 @@
 package jp.co.sss.lms.service;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -340,54 +341,33 @@ public class StudentAttendanceService {
 	}
 
 	
-	//Task.25修正開始　吉村
-	/**
-	 * 勤怠情報（受講生入力）未入力件数取得
-	 * 
-	 * @param lmsUserId  ログインユーザーのLMSユーザーID
-	 * @param trainingDate 現在日付
-	 * @return 未入力件数 
-	 */
-
-	public void loadAttendanceDetail(Model model, Integer courseId, Integer lmsUserId) {
-	    // 勤怠一覧取得
-	    List<AttendanceManagementDto> attendanceManagementDtoList =
-	            getAttendanceManagement(courseId, lmsUserId);
-	    model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
-
-	    // 未入力チェックとメッセージ追加
-	    addUnfilledAttendanceAlert(model, lmsUserId); 
-	}
-	
-	public int getUnfilledCount(Integer lmsUserId, Date trainingDate) {
-
-	    // Mapインターフェースを初期化
-		Map<String, Object> params = new HashMap<>();
-	    params.put("lmsUserId", lmsUserId);
-	    params.put("deleteFlg", Constants.DB_FLG_FALSE); 
-	    params.put("trainingDate", trainingDate);
-	    params.put("attendanceStatusExclude", 1);
-
-	    // Mapper呼び出し
-	    return tStudentAttendanceMapper.getUnfilledCount(params) ;//SimpleDateFormatクラスで世に出していない
-	    		//Attendance util クラス Booleanで条件式を書き、１以上でtrue,それ以外はfaluse
-	}
-	 /**
-     * 未入力チェックとメッセージ設定
+    /**
+     * 未入力チェックを行い、Modelに alert を追加
+     * @author 吉村健 -Task.25
+     * @param model モデル
+     * @return 勤怠管理画面
      */
-    private void addUnfilledAttendanceAlert(Model model, Integer lmsUserId) {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date currentDate = sdf.parse(sdf.format(new Date()));
+    public void addUnfilledAttendanceAlert(Model model, Integer lmsUserId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("lmsUserId", lmsUserId);
+        params.put("deleteFlg", Constants.DB_FLG_FALSE);
+       /* params.put("trainingDate", new Date());*/
+     // 現在日時を取得
+        Date now = new Date();
 
-            int missingCount = getUnfilledCount(lmsUserId, currentDate);
-            if (missingCount > 0) {
-                model.addAttribute("attendanceAlert", "過去日の勤怠に未入力があります。");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // SimpleDateFormatでフォーマット
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate = sdf.format(now);
+
+        // Mapに文字列として格納
+        params.put("trainingDate", new Timestamp(new Date().getTime()));
+
+        // DB から未入力件数を取得
+        int unfilledCount = tStudentAttendanceMapper.getUnfilledCount(params);
+
+        if (unfilledCount >0 && model.getAttribute("attendanceAlert") == null) {
+            model.addAttribute("attendanceAlert", "過去日の勤怠に未入力があります。");
+        } 
     }
- 
-    //Task.25修正修了　吉村
+
 }
