@@ -1,18 +1,14 @@
 package jp.co.sss.lms.service;
 
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 import jp.co.sss.lms.dto.AttendanceManagementDto;
 import jp.co.sss.lms.dto.LoginUserDto;
@@ -342,32 +338,32 @@ public class StudentAttendanceService {
 
 	
     /**
-     * 未入力チェックを行い、Modelに alert を追加
-     * @author 吉村健 -Task.25
-     * @param model モデル
-     * @return 勤怠管理画面
+     * 未入力件数を取得し、Controllerに真偽を渡す
+     * @author 吉村健 -Task.25 
+     * @param 　LMSユーザID
+     * @return 未入力件数
      */
-    public void addUnfilledAttendanceAlert(Model model, Integer lmsUserId) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("lmsUserId", lmsUserId);
-        params.put("deleteFlg", Constants.DB_FLG_FALSE);
-       /* params.put("trainingDate", new Date());*/
-     // 現在日時を取得
-        Date now = new Date();
+	 /**
+     * 過去日の勤怠に未入力があるか判定
+     */
+    public Boolean hasNotEnterCount(Integer lmsUserId) {
+        try {
+            // 現在日時を yyyy-MM-dd フォーマットで取得
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date currentDate = sdf.parse(sdf.format(new Date()));
+            // numberOfCase（件数）を取得
+            Integer numberOfCase = tStudentAttendanceMapper.notEnterCount(
+                    lmsUserId,
+                    Constants.DB_FLG_FALSE,
+                    currentDate
+            );
+            return numberOfCase > 0;
 
-        // SimpleDateFormatでフォーマット
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String formattedDate = sdf.format(now);
-
-        // Mapに文字列として格納
-        params.put("trainingDate", new Timestamp(new Date().getTime()));
-
-        // DB から未入力件数を取得
-        int unfilledCount = tStudentAttendanceMapper.getUnfilledCount(params);
-
-        if (unfilledCount >0 && model.getAttribute("attendanceAlert") == null) {
-            model.addAttribute("attendanceAlert", "過去日の勤怠に未入力があります。");
-        } 
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }                          
+    
     }
 
-}

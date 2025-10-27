@@ -56,11 +56,12 @@ public class AttendanceController {
 	    List<AttendanceManagementDto> attendanceList =
 	            studentAttendanceService.getAttendanceManagement(courseId, lmsUserId);
 	    model.addAttribute("attendanceManagementDtoList", attendanceList);
-
-	    // 未入力時アラートを Service で生成し Model に追加
-	    studentAttendanceService.addUnfilledAttendanceAlert(model, lmsUserId);//吉村健 - Task.25
 	    
-	    return "attendance/detail";
+       //吉村健 - Task.25  // Serviceクラスから取得した真偽の結果を返す 
+	    if (studentAttendanceService.hasNotEnterCount(lmsUserId)) {
+	        model.addAttribute("attendanceAlert", "過去日の勤怠に未入力があります。");
+	    }
+	return "attendance/detail";
 	}
 
 
@@ -160,68 +161,4 @@ public class AttendanceController {
 		return "attendance/detail";
 	
 	}
-	
-	/*@RequestMapping(path = "/update", params = "complete", method = RequestMethod.POST)
-	public String complete(AttendanceForm attendanceForm, RedirectAttributes redirectAttributes)
-	        throws ParseException {
-
-		 // 更新
-	    String updateMessage = studentAttendanceService.update(attendanceForm);
-
-	    // 登録完了メッセージをFlashに設定
-	    redirectAttributes.addFlashAttribute("updateMessage", updateMessage);
-
-	    // 勤怠管理画面へリダイレクト
-	    return "redirect:/attendance/detail";
-	}*/
-
-	
-/*@RequestMapping(path = "/update", params = "complete", method = RequestMethod.POST)
-	public String complete(AttendanceForm attendanceForm, Model model, BindingResult result)
-	        throws ParseException {
-
-	    boolean hasError = false;
-	    List<String> errorMessages = new ArrayList<>();
-
-	    Pattern timePattern = Pattern.compile("^([01]\\d|2[0-3]):[0-5]\\d$");
-
-	    for (DailyAttendanceForm daily : attendanceForm.getAttendanceList()) {
-	        String start = daily.getTrainingStartTime();
-	        String end = daily.getTrainingEndTime();
-
-	       
-	        if (end != null && !end.isEmpty() && (start == null || start.isEmpty())) {
-	            errorMessages.add("出勤時間を入力してください。");
-	            hasError = true;
-	        }
-
-	        if (start != null && !start.isEmpty() && !timePattern.matcher(start).matches()) {
-	            errorMessages.add("出勤時間を正しく入力してください。");
-	            hasError = true;
-	        }
-	        if (end != null && !end.isEmpty() && !timePattern.matcher(end).matches()) {
-	            errorMessages.add("退勤時間を正しく入力してください。");
-	            hasError = true;
-	        }
-	    }
-
-	    if (hasError) {
-	        model.addAttribute("errorMessages", errorMessages);
-	        model.addAttribute("attendanceForm", attendanceForm);
-	        return "attendance/update";
-	    }
-
-	    
-	    String message = studentAttendanceService.update(attendanceForm);
-	    model.addAttribute("message", message);
-
-	    // 一覧の再取得
-	    List<AttendanceManagementDto> attendanceManagementDtoList = studentAttendanceService
-	            .getAttendanceManagement(loginUserDto.getCourseId(), loginUserDto.getLmsUserId());
-	    model.addAttribute("attendanceManagementDtoList", attendanceManagementDtoList);
-
-	    return "attendance/detail";
-	}*/
-	
-
 }

@@ -2,7 +2,6 @@ package jp.co.sss.lms.mapper;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -52,7 +51,7 @@ public interface TStudentAttendanceMapper {
 	
 	 /**
      * 勤怠管理画面用DTOリスト取得
-     * @author 吉村健 - Task.25
+     * 
      */
     List<AttendanceManagementDto> getAttendanceManagement(
             @Param("courseId") Integer courseId,
@@ -61,15 +60,14 @@ public interface TStudentAttendanceMapper {
 
     /**
      * 未入力件数を取得
-     * @param lmsUserId  ユーザーID
+     * @author 吉村健 - Task.25
+     * @param lmsUserId  ユーザID
      * @param deleteFlg  削除フラグ
      * @param trainingDate  日付
      * @return 未入力件数
      */
-    int getUnfilledCount(
+    Integer notEnterCount(
             @Param("lmsUserId") Integer lmsUserId,
             @Param("deleteFlg") Short deleteFlg,
-            @Param("trainingDate") Date trainingDate
-    );
-	int getUnfilledCount(Map<String, Object> params);
-}
+            @Param("trainingDate") Date trainingDate );
+    }
