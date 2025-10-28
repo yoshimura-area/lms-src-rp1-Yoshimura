@@ -15,7 +15,7 @@
 </head>
 <body>
   <th:block th:if="${session.loginUserDto.role == '0001'}">
-    <h2>勤怠管理一覧</h2>
+    <h2>勤怠管理</h2>
   </th:block>
   <th:block th:if="${session.loginUserDto.role != '0001'}">
     <h2>勤怠管理 <small>( [[${attendanceForm.userName}]] )</small></h2>
